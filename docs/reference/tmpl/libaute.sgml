@@ -1,0 +1,39 @@
+<!-- ##### SECTION Title ##### -->
+libaute
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### FUNCTION aute_autentica ##### -->
+<para>
+
+</para>
+
+@confi: 
+@Returns: 
+
+
+<!-- ##### FUNCTION aute_plugin_get_module ##### -->
+<para>
+
+</para>
+
+@confi: 
+@Returns: 
+
+

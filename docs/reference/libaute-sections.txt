@@ -1,0 +1,14 @@
+<SECTION>
+<FILE>libaute</FILE>
+aute_autentica
+aute_plugin_get_module
+</SECTION>
+
+<SECTION>
+<FILE>aute</FILE>
+Aute
+aute_init
+aute_autentica
+aute_destroy
+</SECTION>
+

@@ -1,0 +1,55 @@
+<!-- ##### SECTION Title ##### -->
+aute
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### TYPEDEF Aute ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION aute_init ##### -->
+<para>
+
+</para>
+
+@tipo: 
+@params: 
+@Returns: 
+
+
+<!-- ##### FUNCTION aute_autentica ##### -->
+<para>
+
+</para>
+
+@confi: 
+@Returns: 
+
+
+<!-- ##### FUNCTION aute_destroy ##### -->
+<para>
+
+</para>
+
+@aute: 
+@Returns: 
+
+

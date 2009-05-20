@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<gconfi-key>
+	<name>aute</name>
+	<description>Gestione autenticazione</description>
+
+	<gconfi-key>
+		<name>plugin</name>
+		<description>Il nome del plugin da utilizzare</description>
+	</gconfi-key>
+</gconfi-key>
