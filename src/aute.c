@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2006 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2005-2010 Andrea Zagli <azagli@libero.it>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,6 +20,125 @@
 
 #include "libaute.h"
 
+static void aute_class_init (AuteClass *class);
+static void aute_init (Aute *form);
+
+static void aute_set_property (GObject *object,
+                               guint property_id,
+                               const GValue *value,
+                               GParamSpec *pspec);
+static void aute_get_property (GObject *object,
+                               guint property_id,
+                               GValue *value,
+                               GParamSpec *pspec);
+
+GModule *aute_get_module_from_confi (Aute *aute);
+
+#define AUTE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TYPE_AUTE, AutePrivate))
+
+typedef struct _AutePrivate AutePrivate;
+struct _AutePrivate
+	{
+		GModule *module;
+
+		GSList *parameters;
+
+#ifdef HAVE_LIBCONFI
+		Confi *confi;
+#endif
+	};
+
+G_DEFINE_TYPE (Aute, aute, G_TYPE_OBJECT)
+
+static void
+aute_class_init (AuteClass *class)
+{
+	GObjectClass *object_class = G_OBJECT_CLASS (class);
+
+	object_class->set_property = aute_set_property;
+	object_class->get_property = aute_get_property;
+
+	g_type_class_add_private (object_class, sizeof (AutePrivate));
+}
+
+static void
+aute_init (Aute *form)
+{
+	AutePrivate *priv = AUTE_GET_PRIVATE (form);
+
+	priv->module = NULL;
+	priv->parameters = NULL;
+
+#ifdef HAVE_LIBCONFI
+	priv->confi = NULL;
+#endif
+}
+
+/**
+ * aute_new:
+ *
+ * Returns: the newly created #Aute object.
+ */
+Aute
+*aute_new ()
+{
+	return AUTE (g_object_new (aute_get_type (), NULL));
+}
+
+/*
+ * aute_set_config:
+ * @aute: an #Aute object.
+ * @parameters: a #GSList of config parameters.
+ *
+ */
+gboolean
+aute_set_config (Aute *aute, GSList *parameters)
+{
+	gchar *module_name;
+
+	AutePrivate *priv = AUTE_GET_PRIVATE (aute);
+
+	g_return_val_if_fail (parameters != NULL && parameters->data != NULL, FALSE);
+
+	priv->parameters = parameters;
+
+	module_name = NULL;
+
+#ifdef HAVE_LIBCONFI
+	/* the first and only parameters must be a Confi object */
+	Confi *confi;
+
+	if (IS_CONFI (priv->parameters->data))
+		{
+			priv->confi = CONFI (priv->parameters->data);
+			module_name = aute_get_module_from_confi (aute);
+		}
+#endif
+
+	if (module_name == NULL)
+		{
+			/* the first parameter must be the module's name with the full path */
+			module_name = g_strdup ((gchar *)priv->parameters->data);
+		}
+
+	if (module_name == NULL)
+		{
+			/* didn't find valid parameters */
+			return FALSE;
+		}
+
+	/* loading library */
+	priv->module = g_module_open (module_name, G_MODULE_BIND_LAZY);
+	if (!priv->module)
+		{
+			/* TO DO */
+			g_warning ("Error g_module_open.");
+			return FALSE;
+		}
+
+	return TRUE;
+}
+
 /**
  * aute_autentica:
  * @confi: un oggetto #Confi; se viene passato NULL verrà utilizzata la 
@@ -30,41 +149,30 @@
  * stringa vuota ("") se viene premuto "Annulla"; NULL in caso di errore.
  */
 gchar
-*aute_autentica (Confi *confi)
+*aute_autentica (Aute *aute)
 {
-	GModule *module;
-
-	gchar *(*autentica) (Confi *confi);
+	gchar *(*autentica) (GSList *parameters);
 	gchar *ret;
 
-	if (confi == NULL)
-		{
-			/* TO DO */
-			/* leggere il provider_id e cnc_string da GConf dell'utente */
-			confi = confi_new (NULL, "PostgreSQL", "HOSTADDR=127.0.0.1;PORT=5432;DATABASE=confi;HOST=localhost;USER=postgres", "Default", NULL, FALSE);
-			if (confi == NULL)
-				{
-					/* TO DO */
-					return NULL;
-				}
-		}
+	AutePrivate *priv = AUTE_GET_PRIVATE (aute);
 
-	/* caricamento del plugin in base alla configurazione */
-	module = aute_plugin_get_module (confi);
+	g_return_val_if_fail (priv->module != NULL, NULL);
 
-	/* carico la funzione */
-	if (!g_module_symbol (module, "autentica", (gpointer *)&autentica))
+	ret = NULL;
+
+	/* loading the function */
+	if (!g_module_symbol (priv->module, "autentica", (gpointer *)&autentica))
 		{
 			/* TO DO */
 			g_fprintf (stderr, "Error g_module_symbol\n");
 			return NULL;
 		}
 
-	/* chiamo la funzione del plugin */
-	ret = (*autentica) (confi);
+	/* calling plugin's function */
+	ret = (*autentica) (priv->parameters);
 
-	/* chiudo la libreria */
-	if (!g_module_close (module))
+	/* closing the library */
+	if (!g_module_close (priv->module))
 		{
 			g_fprintf (stderr, "Error g_module_close\n");
 		}
@@ -72,19 +180,60 @@ gchar
 	return ret;
 }
 
+/* PRIVATE */
+static void
+aute_set_property (GObject *object,
+                   guint property_id,
+                   const GValue *value,
+                   GParamSpec *pspec)
+{
+	Aute *aute = (Aute *)object;
+
+	AutePrivate *priv = AUTE_GET_PRIVATE (aute);
+
+	switch (property_id)
+		{
+			default:
+				G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+				break;
+	  }
+}
+
+static void
+aute_get_property (GObject *object,
+                   guint property_id,
+                   GValue *value,
+                   GParamSpec *pspec)
+{
+	Aute *aute = (Aute *)object;
+
+	AutePrivate *priv = AUTE_GET_PRIVATE (aute);
+
+	switch (property_id)
+		{
+			default:
+				G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+				break;
+	  }
+}
+
+#ifdef HAVE_LIBCONFI
 /**
  * aute_get_plugin_module:
- * @confi: un oggetto #Confi.
+ * @aute: un oggetto #Aute.
  *
- * Returns: l'oggetto #GModule corrispondente al plugin.
+ * Returns: il nome, con il percorso, del plugin.
  */
-GModule
-*aute_plugin_get_module (Confi *confi)
+gchar
+*aute_get_module_from_confi (Aute *aute)
 {
 	gchar *libname;
-	GModule *module = NULL;
 
-	libname = confi_path_get_value (confi, "aute/plugin");
+	AutePrivate *priv = AUTE_GET_PRIVATE (aute);
+
+	g_return_val_if_fail (IS_CONFI (priv->confi), NULL);
+
+	libname = confi_path_get_value (priv->confi, "aute/plugin");
 	if (libname == NULL)
 		{
 			/* TO DO */
@@ -93,14 +242,6 @@ GModule
 		}
 	libname = g_strconcat (LIBAUTE_PLUGINS_DIR "/", libname, NULL);
 
-	/* carico la libreria */
-	module = g_module_open (libname, G_MODULE_BIND_LAZY);
-	if (!module)
-		{
-			/* TO DO */
-			g_warning ("Error g_module_open.");
-			return NULL;
-		}
-
-	return module;
+	return libname;
 }
+#endif

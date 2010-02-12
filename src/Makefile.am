@@ -1,7 +1,9 @@
 AM_CPPFLAGS = $(LIBAUTE_CFLAGS) \
+              $(LIBCONFI_CFLAGS) \
               -DLIBAUTE_PLUGINS_DIR=\""$(libdir)/libaute/plugins"\"
 
-LIBS = $(LIBAUTE_LIBS)
+LIBS = $(LIBAUTE_LIBS) \
+       $(LIBCONFI_LIBS)
 
 lib_LTLIBRARIES = libaute.la
 
