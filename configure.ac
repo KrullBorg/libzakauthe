@@ -27,11 +27,16 @@ PKG_CHECK_MODULES(LIBAUTE, [glib-2.0 >= 2.10.0
 AC_SUBST(LIBAUTE_CFLAGS)
 AC_SUBST(LIBAUTE_LIBS)
 
-PKG_CHECK_MODULES(LIBCONFI, [libconfi >= 0.0.2], AC_DEFINE(HAVE_LIBCONFI, [1], [libconfi is present]), have_libconfi=yes)
+PKG_CHECK_MODULES(LIBCONFI, [libconfi >= 0.0.2], [AC_DEFINE(HAVE_LIBCONFI, [1], [libconfi is present]), have_libconfi=yes], have_libconfi=no)
 
 AM_CONDITIONAL(HAVE_LIBCONFI, test x"$have_libconfi" = "xyes")
 AC_SUBST(LIBCONFI_CFLAGS)
 AC_SUBST(LIBCONFI_LIBS)
+
+if test x"$have_libconfi" = "xyes"
+then
+	AC_SUBST(PKGCONFIG_DEPEND, [", libconfi"])
+fi
 
 # Checks for header files.
 

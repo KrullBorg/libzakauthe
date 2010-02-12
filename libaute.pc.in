@@ -6,6 +6,6 @@ includedir=@includedir@
 Name: @PACKAGE_NAME@
 Description: Libreria per la gestione dell'autenticazione attraverso plugin
 Version: @PACKAGE_VERSION@
-Requires: glib-2.0, libconfi
+Requires: glib-2.0 @PKGCONFIG_DEPEND@
 Libs: -L${libdir} -laute
 Cflags: -I${includedir}
