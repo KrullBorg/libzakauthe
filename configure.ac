@@ -4,6 +4,7 @@
 AC_PREREQ(2.59)
 AC_INIT([libaute], [0.0.2], [azagli@libero.it])
 AC_CONFIG_SRCDIR([src/aute.c])
+AC_CONFIG_HEADER([config.h])
 
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
