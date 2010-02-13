@@ -35,6 +35,7 @@ static void aute_get_property (GObject *object,
                                guint property_id,
                                GValue *value,
                                GParamSpec *pspec);
+static void aute_finalize (GObject *object);
 
 GModule *aute_get_module_from_confi (Aute *aute);
 
@@ -61,6 +62,7 @@ aute_class_init (AuteClass *class)
 
 	object_class->set_property = aute_set_property;
 	object_class->get_property = aute_get_property;
+	object_class->finalize = aute_finalize;
 
 	g_type_class_add_private (object_class, sizeof (AutePrivate));
 }
@@ -175,12 +177,6 @@ gchar
 	/* calling plugin's function */
 	ret = (*autentica) (priv->parameters);
 
-	/* closing the library */
-	if (!g_module_close (priv->module))
-		{
-			g_fprintf (stderr, "Error g_module_close\n");
-		}
-
 	return ret;
 }
 
@@ -219,6 +215,30 @@ aute_get_property (GObject *object,
 				G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
 				break;
 	  }
+}
+
+static void
+aute_finalize (GObject *object)
+{
+	Aute *aute = AUTE (object);
+
+	AutePrivate *priv = AUTE_GET_PRIVATE (aute);
+
+	/* closing the library */
+	if (priv->module != NULL)
+		{
+			if (!g_module_close (priv->module))
+				{
+					g_fprintf (stderr, "Error g_module_close\n");
+				}
+			else
+				{
+					priv->module = NULL;
+				}
+		}
+
+	/* Chain up to the parent class */
+	G_OBJECT_CLASS (aute_parent_class)->finalize (object);
 }
 
 #ifdef HAVE_LIBCONFI
