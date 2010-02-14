@@ -23,6 +23,7 @@ GTK_DOC_CHECK
 have_libconfi=no
 
 PKG_CHECK_MODULES(LIBAUTE, [glib-2.0 >= 2.10.0
+                            gobject-2.0 >= 2.10.0
                             gmodule-2.0 >= 2.10.0])
 
 AC_SUBST(LIBAUTE_CFLAGS)
