@@ -1,4 +1,4 @@
-SUBDIRS = src docs
+SUBDIRS = src docs data
 
 EXTRA_DIST = libaute.pc.in
 
