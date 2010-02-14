@@ -5,6 +5,8 @@ AM_CPPFLAGS = $(LIBAUTE_CFLAGS) \
 LIBS = $(LIBAUTE_LIBS) \
        $(LIBCONFI_LIBS)
 
+libaute_la_LDFLAGS = -no-undefined
+
 lib_LTLIBRARIES = libaute.la
 
 libaute_la_SOURCES = aute.c
