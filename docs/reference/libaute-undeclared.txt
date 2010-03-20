@@ -1,0 +1,3 @@
+aute_destroy
+aute_init
+aute_plugin_get_module

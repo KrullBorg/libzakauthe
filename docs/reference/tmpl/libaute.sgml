@@ -9,12 +9,10 @@ libaute
 
 </para>
 
-
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
-
 
 <!-- ##### SECTION Stability_Level ##### -->
 
@@ -24,16 +22,7 @@ libaute
 
 </para>
 
-@confi: 
-@Returns: 
-
-
-<!-- ##### FUNCTION aute_plugin_get_module ##### -->
-<para>
-
-</para>
-
-@confi: 
+@aute: 
 @Returns: 
 
 

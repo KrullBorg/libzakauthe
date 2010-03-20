@@ -1,0 +1,64 @@
+<MACRO>
+<NAME>TYPE_AUTE</NAME>
+#define TYPE_AUTE                 (aute_get_type ())
+</MACRO>
+<MACRO>
+<NAME>AUTE</NAME>
+#define AUTE(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_AUTE, Aute))
+</MACRO>
+<MACRO>
+<NAME>AUTE_CLASS</NAME>
+#define AUTE_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_AUTE, AuteClass))
+</MACRO>
+<MACRO>
+<NAME>IS_AUTE</NAME>
+#define IS_AUTE(obj)              (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TYPE_AUTE))
+</MACRO>
+<MACRO>
+<NAME>IS_AUTE_CLASS</NAME>
+#define IS_AUTE_CLASS(klass)      (G_TYPE_CHECK_CLASS_TYPE ((klass), TYPE_AUTE))
+</MACRO>
+<MACRO>
+<NAME>AUTE_GET_CLASS</NAME>
+#define AUTE_GET_CLASS(obj)       (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_AUTE, AuteClass))
+</MACRO>
+<STRUCT>
+<NAME>Aute</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>AuteClass</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>Aute</NAME>
+struct _Aute
+	{
+		GObject parent;
+	};
+</STRUCT>
+<STRUCT>
+<NAME>AuteClass</NAME>
+struct _AuteClass
+	{
+		GObjectClass parent_class;
+	};
+</STRUCT>
+<FUNCTION>
+<NAME>aute_get_type</NAME>
+<RETURNS>GType </RETURNS>
+void 
+</FUNCTION>
+<FUNCTION>
+<NAME>aute_new</NAME>
+<RETURNS>Aute *</RETURNS>
+void 
+</FUNCTION>
+<FUNCTION>
+<NAME>aute_set_config</NAME>
+<RETURNS>gboolean </RETURNS>
+Aute *aute, GSList *parameters 
+</FUNCTION>
+<FUNCTION>
+<NAME>aute_autentica</NAME>
+<RETURNS>gchar *</RETURNS>
+Aute *aute 
+</FUNCTION>

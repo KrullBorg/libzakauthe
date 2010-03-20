@@ -25,3 +25,8 @@ missing
 *~
 stamp-h1
 *.in
+*.bak
+*.stamp
+*.tar.gz
+docs/reference/html/
+docs/reference/xml/

@@ -1,0 +1,10 @@
+AUTE
+AUTE_CLASS
+AUTE_GET_CLASS
+AuteClass
+IS_AUTE
+IS_AUTE_CLASS
+TYPE_AUTE
+aute_get_type
+aute_new
+aute_set_config

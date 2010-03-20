@@ -1,0 +1,16 @@
+<SECTION>
+<FILE>libaute</FILE>
+TYPE_AUTE
+AUTE
+AUTE_CLASS
+IS_AUTE
+IS_AUTE_CLASS
+AUTE_GET_CLASS
+<TITLE>Aute</TITLE>
+Aute
+aute_get_type
+aute_new
+aute_set_config
+aute_autentica
+</SECTION>
+

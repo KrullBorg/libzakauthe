@@ -1,0 +1,25 @@
+<!-- ##### FUNCTION aute_destroy ##### -->
+<para>
+
+</para>
+
+@aute: 
+@Returns: 
+
+<!-- ##### FUNCTION aute_init ##### -->
+<para>
+
+</para>
+
+@tipo: 
+@params: 
+@Returns: 
+
+<!-- ##### FUNCTION aute_plugin_get_module ##### -->
+<para>
+
+</para>
+
+@confi: 
+@Returns: 
+

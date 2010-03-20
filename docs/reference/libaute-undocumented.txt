@@ -1,0 +1,18 @@
+9% symbol docs coverage.
+1 symbols documented.
+0 symbols incomplete.
+10 not documented.
+
+
+Aute
+aute_autentica
+aute_destroy
+aute_get_plugin_module
+aute_init
+aute_new
+aute_plugin_get_module
+
+
+aute:Short_Description
+libaute:Long_Description
+libaute:Short_Description
