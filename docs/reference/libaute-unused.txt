@@ -5,6 +5,7 @@ AuteClass
 IS_AUTE
 IS_AUTE_CLASS
 TYPE_AUTE
+aute_get_management_gui
 aute_get_type
 aute_new
 aute_set_config

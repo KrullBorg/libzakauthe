@@ -1,10 +1,10 @@
 9% symbol docs coverage.
 1 symbols documented.
-0 symbols incomplete.
+1 symbols incomplete.
 10 not documented.
 
 
-Aute
+Aute (<items>)
 aute_autentica
 aute_destroy
 aute_get_plugin_module

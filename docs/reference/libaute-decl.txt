@@ -62,3 +62,8 @@ Aute *aute, GSList *parameters
 <RETURNS>gchar *</RETURNS>
 Aute *aute 
 </FUNCTION>
+<FUNCTION>
+<NAME>aute_get_management_gui</NAME>
+<RETURNS>GtkWidget *</RETURNS>
+Aute *aute 
+</FUNCTION>

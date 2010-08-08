@@ -22,6 +22,7 @@
 #include <glib.h>
 #include <glib-object.h>
 #include <gmodule.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 
@@ -53,6 +54,8 @@ Aute *aute_new (void);
 gboolean aute_set_config (Aute *aute, GSList *parameters);
 
 gchar *aute_autentica (Aute *aute);
+
+GtkWidget *aute_get_management_gui (Aute *aute);
 
 
 G_END_DECLS

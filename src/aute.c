@@ -147,9 +147,7 @@ aute_set_config (Aute *aute, GSList *parameters)
 
 /**
  * aute_autentica:
- * @confi: un oggetto #Confi; se viene passato NULL verrà utilizzata la 
- * configurazione Default, letta dal database specificato in GConf dell'utente
- * corrente.
+ * @aute: 
  *
  * Returns: il nome utente se l'autenticazione va a buon fine; 
  * stringa vuota ("") se viene premuto "Annulla"; NULL in caso di errore.
@@ -170,7 +168,7 @@ gchar
 	if (!g_module_symbol (priv->module, "autentica", (gpointer *)&autentica))
 		{
 			/* TO DO */
-			g_fprintf (stderr, "Error g_module_symbol\n");
+			g_warning ("Error g_module_symbol\n");
 			return NULL;
 		}
 
@@ -178,6 +176,38 @@ gchar
 	ret = (*autentica) (priv->parameters);
 
 	return ret;
+}
+
+/**
+ * aute_autentica:
+ * @aute: 
+ *
+ */
+GtkWidget
+*aute_get_management_gui (Aute *aute)
+{
+	GtkWidget *(*get_management_gui) (GSList *parameters);
+	GtkWidget *ret;
+
+	AutePrivate *priv = AUTE_GET_PRIVATE (aute);
+
+	g_return_val_if_fail (priv->module != NULL, NULL);
+
+	ret = NULL;
+
+	/* loading the function */
+	if (!g_module_symbol (priv->module, "get_management_gui", (gpointer *)&get_management_gui))
+		{
+			/* TO DO */
+			g_warning ("Error g_module_symbol\n");
+			return NULL;
+		}
+
+	/* calling plugin's function */
+	ret = (*get_management_gui) (priv->parameters);
+
+	return ret;
+
 }
 
 /* PRIVATE */

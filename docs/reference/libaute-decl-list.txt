@@ -1,16 +1,18 @@
 <SECTION>
 <FILE>libaute</FILE>
+<TITLE>Aute</TITLE>
 TYPE_AUTE
 AUTE
 AUTE_CLASS
 IS_AUTE
 IS_AUTE_CLASS
 AUTE_GET_CLASS
-<TITLE>Aute</TITLE>
 Aute
+AuteClass
 aute_get_type
 aute_new
 aute_set_config
 aute_autentica
+aute_get_management_gui
 </SECTION>
 
