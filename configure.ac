@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([libaute], [0.1.0], [azagli@libero.it])
+AC_INIT([libaute], [0.2.0], [azagli@libero.it])
 AC_CONFIG_SRCDIR([src/aute.c])
 AC_CONFIG_HEADER([config.h])
 
@@ -25,10 +25,8 @@ GTK_DOC_CHECK
 # Checks for libraries.
 have_libconfi=no
 
-PKG_CHECK_MODULES(LIBAUTE, [glib-2.0 >= 2.10.0
-                            gobject-2.0 >= 2.10.0
-                            gmodule-2.0 >= 2.10.0
-                            gtk+-2.0 >= 2.0.0])
+PKG_CHECK_MODULES(LIBAUTE, [gmodule-2.0 >= 2.10.0
+                            gtk+-3.0 >= 3.0.0])
 
 AC_SUBST(LIBAUTE_CFLAGS)
 AC_SUBST(LIBAUTE_LIBS)
