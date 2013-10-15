@@ -203,12 +203,16 @@ gchar
 	if (!g_module_symbol (priv->module, "autentica_get_password", (gpointer *)&autentica_get_password))
 		{
 			/* TO DO */
-			g_warning ("Error g_module_symbol\n");
-			return NULL;
-		}
+			g_warning ("Error g_module_symbol: autentica_get_password.\n");
 
-	/* calling plugin's function */
-	ret = (*autentica_get_password) (priv->parameters, password);
+			/* try aute_autentica */
+			ret = aute_autentica (aute);
+		}
+	else
+		{
+			/* calling plugin's function */
+			ret = (*autentica_get_password) (priv->parameters, password);
+		}
 
 	return ret;
 }
@@ -311,6 +315,7 @@ aute_finalize (GObject *object)
  * aute_get_plugin_module:
  * @aute: un oggetto #Aute.
  *
+ * Returns: il nome, con il percorso, del plugin.
  * Returns: il nome, con il percorso, del plugin.
  */
 gchar
