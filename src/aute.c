@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2010 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2005-2013 Andrea Zagli <azagli@libero.it>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -174,6 +174,41 @@ gchar
 
 	/* calling plugin's function */
 	ret = (*autentica) (priv->parameters);
+
+	return ret;
+}
+
+/**
+ * aute_autentica_get_password:
+ * @aute: 
+ * @password:
+ *
+ * Returns: il nome utente se l'autenticazione va a buon fine; 
+ * stringa vuota ("") se viene premuto "Annulla"; NULL in caso di errore.
+ * Nel parametro @password ritorna la password inserita.
+ */
+gchar
+*aute_autentica_get_password (Aute *aute, gchar **password)
+{
+	gchar *(*autentica_get_password) (GSList *parameters, gchar **password);
+	gchar *ret;
+
+	AutePrivate *priv = AUTE_GET_PRIVATE (aute);
+
+	g_return_val_if_fail (priv->module != NULL, NULL);
+
+	ret = NULL;
+
+	/* loading the function */
+	if (!g_module_symbol (priv->module, "autentica_get_password", (gpointer *)&autentica_get_password))
+		{
+			/* TO DO */
+			g_warning ("Error g_module_symbol\n");
+			return NULL;
+		}
+
+	/* calling plugin's function */
+	ret = (*autentica_get_password) (priv->parameters, password);
 
 	return ret;
 }
