@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2010 Andrea Zagli <azagli@libero.it>
+ * Copyright 2005-2013 Andrea Zagli <azagli@libero.it>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -54,6 +54,7 @@ Aute *aute_new (void);
 gboolean aute_set_config (Aute *aute, GSList *parameters);
 
 gchar *aute_autentica (Aute *aute);
+gchar *aute_autentica_get_password (Aute *aute, gchar **password);
 
 GtkWidget *aute_get_management_gui (Aute *aute);
 
