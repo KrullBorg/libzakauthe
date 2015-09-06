@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([libaute], [0.2.0], [azagli@libero.it])
+AC_INIT([libzakauth], [0.5.0], [azagli@libero.it])
 AC_CONFIG_SRCDIR([src/aute.c])
 AC_CONFIG_HEADER([config.h])
 
@@ -51,7 +51,7 @@ AC_C_CONST
 AC_FUNC_MALLOC
 
 AC_CONFIG_FILES([
-  libaute.pc
+  libzakauth.pc
   Makefile
   src/Makefile
   data/Makefile
