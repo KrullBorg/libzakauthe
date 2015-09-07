@@ -7,5 +7,5 @@ Name: @PACKAGE_NAME@
 Description: Library to manage authentication through plugins
 Version: @PACKAGE_VERSION@
 Requires: glib-2.0 @PKGCONFIG_DEPEND@
-Libs: -L${libdir} -lzakauth
+Libs: -L${libdir} -lzakauthe
 Cflags: -I${includedir}

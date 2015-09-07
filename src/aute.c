@@ -23,27 +23,27 @@
 #include <stdio.h>
 #include <glib/gprintf.h>
 
-#include "libzakauth.h"
+#include "libzakauthe.h"
 
-static void zak_auth_class_init (ZakAuthClass *class);
-static void zak_auth_init (ZakAuth *form);
+static void zak_authe_class_init (ZakAutheClass *class);
+static void zak_authe_init (ZakAuthe *form);
 
-static void zak_auth_set_property (GObject *object,
+static void zak_authe_set_property (GObject *object,
                                guint property_id,
                                const GValue *value,
                                GParamSpec *pspec);
-static void zak_auth_get_property (GObject *object,
+static void zak_authe_get_property (GObject *object,
                                guint property_id,
                                GValue *value,
                                GParamSpec *pspec);
-static void zak_auth_finalize (GObject *object);
+static void zak_authe_finalize (GObject *object);
 
-GModule *zak_auth_get_module_from_confi (ZakAuth *aute);
+GModule *zak_authe_get_module_from_confi (ZakAuthe *aute);
 
-#define ZAK_AUTH_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_TYPE_AUTH, ZakAuthPrivate))
+#define ZAK_AUTHE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_TYPE_AUTHE, ZakAuthePrivate))
 
-typedef struct _ZakAuthPrivate ZakAuthPrivate;
-struct _ZakAuthPrivate
+typedef struct _ZakAuthePrivate ZakAuthePrivate;
+struct _ZakAuthePrivate
 	{
 		GModule *module;
 
@@ -54,24 +54,24 @@ struct _ZakAuthPrivate
 #endif
 	};
 
-G_DEFINE_TYPE (ZakAuth, zak_auth, G_TYPE_OBJECT)
+G_DEFINE_TYPE (ZakAuthe, zak_authe, G_TYPE_OBJECT)
 
 static void
-zak_auth_class_init (ZakAuthClass *class)
+zak_authe_class_init (ZakAutheClass *class)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (class);
 
-	object_class->set_property = zak_auth_set_property;
-	object_class->get_property = zak_auth_get_property;
-	object_class->finalize = zak_auth_finalize;
+	object_class->set_property = zak_authe_set_property;
+	object_class->get_property = zak_authe_get_property;
+	object_class->finalize = zak_authe_finalize;
 
-	g_type_class_add_private (object_class, sizeof (ZakAuthPrivate));
+	g_type_class_add_private (object_class, sizeof (ZakAuthePrivate));
 }
 
 static void
-zak_auth_init (ZakAuth *form)
+zak_authe_init (ZakAuthe *form)
 {
-	ZakAuthPrivate *priv = ZAK_AUTH_GET_PRIVATE (form);
+	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (form);
 
 	priv->module = NULL;
 	priv->parameters = NULL;
@@ -82,28 +82,28 @@ zak_auth_init (ZakAuth *form)
 }
 
 /**
- * zak_auth_new:
+ * zak_authe_new:
  *
- * Returns: the newly created #ZakAuth object.
+ * Returns: the newly created #ZakAuthe object.
  */
-ZakAuth
-*zak_auth_new ()
+ZakAuthe
+*zak_authe_new ()
 {
-	return ZAK_AUTH (g_object_new (zak_auth_get_type (), NULL));
+	return ZAK_AUTHE (g_object_new (zak_authe_get_type (), NULL));
 }
 
 /*
- * zak_auth_set_config:
- * @aute: an #ZakAuth object.
+ * zak_authe_set_config:
+ * @aute: an #ZakAuthe object.
  * @parameters: a #GSList of config parameters.
  *
  */
 gboolean
-zak_auth_set_config (ZakAuth *aute, GSList *parameters)
+zak_authe_set_config (ZakAuthe *aute, GSList *parameters)
 {
 	gchar *module_name;
 
-	ZakAuthPrivate *priv = ZAK_AUTH_GET_PRIVATE (aute);
+	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (aute);
 
 	g_return_val_if_fail (parameters != NULL && parameters->data != NULL, FALSE);
 
@@ -118,7 +118,7 @@ zak_auth_set_config (ZakAuth *aute, GSList *parameters)
 	if (IS_CONFI (priv->parameters->data))
 		{
 			priv->confi = CONFI (priv->parameters->data);
-			module_name = zak_auth_get_module_from_confi (aute);
+			module_name = zak_authe_get_module_from_confi (aute);
 		}
 #endif
 
@@ -147,19 +147,19 @@ zak_auth_set_config (ZakAuth *aute, GSList *parameters)
 }
 
 /**
- * zak_auth_auth:
+ * zak_authe_authe:
  * @aute:
  *
  * Returns: il nome utente se l'autenticazione va a buon fine;
  * stringa vuota ("") se viene premuto "Annulla"; NULL in caso di errore.
  */
 gchar
-*zak_auth_auth (ZakAuth *aute)
+*zak_authe_authe (ZakAuthe *aute)
 {
 	gchar *(*autentica) (GSList *parameters);
 	gchar *ret;
 
-	ZakAuthPrivate *priv = ZAK_AUTH_GET_PRIVATE (aute);
+	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (aute);
 
 	g_return_val_if_fail (priv->module != NULL, NULL);
 
@@ -180,7 +180,7 @@ gchar
 }
 
 /**
- * zak_auth_get_password:
+ * zak_authe_get_password:
  * @aute:
  * @password:
  *
@@ -189,47 +189,47 @@ gchar
  * Nel parametro @password ritorna la password inserita.
  */
 gchar
-*zak_auth_get_password (ZakAuth *aute, gchar **password)
+*zak_authe_get_password (ZakAuthe *aute, gchar **password)
 {
-	gchar *(*zak_auth_plg_get_password) (GSList *parameters, gchar **password);
+	gchar *(*zak_authe_plg_get_password) (GSList *parameters, gchar **password);
 	gchar *ret;
 
-	ZakAuthPrivate *priv = ZAK_AUTH_GET_PRIVATE (aute);
+	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (aute);
 
 	g_return_val_if_fail (priv->module != NULL, NULL);
 
 	ret = NULL;
 
 	/* loading the function */
-	if (!g_module_symbol (priv->module, "zak_auth_plg_get_password", (gpointer *)&zak_auth_plg_get_password))
+	if (!g_module_symbol (priv->module, "zak_authe_plg_get_password", (gpointer *)&zak_authe_plg_get_password))
 		{
 			/* TO DO */
-			g_warning ("Error g_module_symbol: zak_auth_plg_get_password.\n");
+			g_warning ("Error g_module_symbol: zak_authe_plg_get_password.\n");
 
-			/* try zak_auth_auth */
-			ret = zak_auth_auth (aute);
+			/* try zak_authe_authe */
+			ret = zak_authe_authe (aute);
 		}
 	else
 		{
 			/* calling plugin's function */
-			ret = (*zak_auth_plg_get_password) (priv->parameters, password);
+			ret = (*zak_authe_plg_get_password) (priv->parameters, password);
 		}
 
 	return ret;
 }
 
 /**
- * zak_auth_get_management_gui:
+ * zak_authe_get_management_gui:
  * @aute:
  *
  */
 GtkWidget
-*zak_auth_get_management_gui (ZakAuth *aute)
+*zak_authe_get_management_gui (ZakAuthe *aute)
 {
 	GtkWidget *(*get_management_gui) (GSList *parameters);
 	GtkWidget *ret;
 
-	ZakAuthPrivate *priv = ZAK_AUTH_GET_PRIVATE (aute);
+	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (aute);
 
 	g_return_val_if_fail (priv->module != NULL, NULL);
 
@@ -252,14 +252,14 @@ GtkWidget
 
 /* PRIVATE */
 static void
-zak_auth_set_property (GObject *object,
+zak_authe_set_property (GObject *object,
                    guint property_id,
                    const GValue *value,
                    GParamSpec *pspec)
 {
-	ZakAuth *aute = (ZakAuth *)object;
+	ZakAuthe *aute = (ZakAuthe *)object;
 
-	ZakAuthPrivate *priv = ZAK_AUTH_GET_PRIVATE (aute);
+	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (aute);
 
 	switch (property_id)
 		{
@@ -270,14 +270,14 @@ zak_auth_set_property (GObject *object,
 }
 
 static void
-zak_auth_get_property (GObject *object,
+zak_authe_get_property (GObject *object,
                    guint property_id,
                    GValue *value,
                    GParamSpec *pspec)
 {
-	ZakAuth *aute = (ZakAuth *)object;
+	ZakAuthe *aute = (ZakAuthe *)object;
 
-	ZakAuthPrivate *priv = ZAK_AUTH_GET_PRIVATE (aute);
+	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (aute);
 
 	switch (property_id)
 		{
@@ -288,11 +288,11 @@ zak_auth_get_property (GObject *object,
 }
 
 static void
-zak_auth_finalize (GObject *object)
+zak_authe_finalize (GObject *object)
 {
-	ZakAuth *aute = ZAK_AUTH (object);
+	ZakAuthe *aute = ZAK_AUTHE (object);
 
-	ZakAuthPrivate *priv = ZAK_AUTH_GET_PRIVATE (aute);
+	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (aute);
 
 	/* closing the library */
 	if (priv->module != NULL)
@@ -308,23 +308,23 @@ zak_auth_finalize (GObject *object)
 		}
 
 	/* Chain up to the parent class */
-	G_OBJECT_CLASS (zak_auth_parent_class)->finalize (object);
+	G_OBJECT_CLASS (zak_authe_parent_class)->finalize (object);
 }
 
 #ifdef HAVE_LIBCONFI
 /**
- * zak_auth_get_plugin_module:
- * @aute: un oggetto #ZakAuth.
+ * zak_authe_get_plugin_module:
+ * @aute: un oggetto #ZakAuthe.
  *
  * Returns: il nome, con il percorso, del plugin.
  * Returns: il nome, con il percorso, del plugin.
  */
 gchar
-*zak_auth_get_module_from_confi (ZakAuth *aute)
+*zak_authe_get_module_from_confi (ZakAuthe *aute)
 {
 	gchar *libname;
 
-	ZakAuthPrivate *priv = ZAK_AUTH_GET_PRIVATE (aute);
+	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (aute);
 
 	g_return_val_if_fail (IS_CONFI (priv->confi), NULL);
 
@@ -335,7 +335,7 @@ gchar
 			g_warning ("Valore nullo della configurazione per il plugin.");
 			return NULL;
 		}
-	libname = g_strconcat (LIB_ZAK_AUTH_PLUGINS_DIR "/", libname, NULL);
+	libname = g_strconcat (LIB_ZAK_AUTHE_PLUGINS_DIR "/", libname, NULL);
 
 	return libname;
 }

@@ -4,11 +4,11 @@
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
 
-PKG_NAME="libzakauth"
+PKG_NAME="libzakauthe"
 
 (test -f $srcdir/configure.ac \
   && test -d $srcdir/src \
-  && test -f $srcdir/src/libzakauth.h) || {
+  && test -f $srcdir/src/libzakauthe.h) || {
     echo -n "**Error**: Directory "\`$srcdir\'" does not look like the"
     echo " top-level libaute directory"
     exit 1

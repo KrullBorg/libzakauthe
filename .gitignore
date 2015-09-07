@@ -13,7 +13,7 @@ depcomp
 version.xml
 gtk-doc.make
 install-sh
-libzakauth.pc
+libzakauthe.pc
 libtool
 ltmain.sh
 missing
