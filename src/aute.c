@@ -166,7 +166,7 @@ gchar
 	ret = NULL;
 
 	/* loading the function */
-	if (!g_module_symbol (priv->module, "autentica", (gpointer *)&autentica))
+	if (!g_module_symbol (priv->module, "zak_authe_plg_authe", (gpointer *)&autentica))
 		{
 			/* TO DO */
 			g_warning ("Error g_module_symbol\n");
