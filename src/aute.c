@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2015 Andrea Zagli <azagli@libero.it>
+ * Copyright (C) 2005-2016 Andrea Zagli <azagli@libero.it>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -213,6 +213,43 @@ gchar
 		{
 			/* calling plugin's function */
 			ret = (*zak_authe_plg_get_password) (priv->parameters, password);
+		}
+
+	return ret;
+}
+
+/**
+ * zak_authe_authe_nogui:
+ * @zakaute:
+ * @username:
+ * @password:
+ * @new_password:
+ *
+ * Returns: #TRUE if the user is authenticated; #FALSE otherwise.
+ */
+gboolean
+zak_authe_authe_nogui (ZakAuthe *zakauthe, const gchar *username, const gchar *password, const gchar *new_password)
+{
+	gboolean ret;
+
+	gboolean (*zak_authe_plg_authe_nogui) (GSList *parameters, const gchar *username, const gchar *password, const gchar *new_password);
+
+	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (zakauthe);
+
+	g_return_val_if_fail (priv->module != NULL, FALSE);
+
+	/* loading the function */
+	if (!g_module_symbol (priv->module, "zak_authe_plg_authe_nogui", (gpointer *)&zak_authe_plg_authe_nogui))
+		{
+			/* TO DO */
+			g_warning ("Error g_module_symbol: zak_authe_plg_authe_nogui.\n");
+
+			ret = FALSE;
+		}
+	else
+		{
+			/* calling plugin's function */
+			ret = (*zak_authe_plg_authe_nogui) (priv->parameters, username, password, new_password);
 		}
 
 	return ret;

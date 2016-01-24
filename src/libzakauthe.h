@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 Andrea Zagli <azagli@libero.it>
+ * Copyright 2005-2016 Andrea Zagli <azagli@libero.it>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef __ZAKAUTH_H__
+#ifndef __ZAKAUTHE_H__
 #define __ZAKAUTHE_H__
 
 #include <glib.h>
@@ -55,6 +55,7 @@ gboolean zak_authe_set_config (ZakAuthe *zakauthe, GSList *parameters);
 
 gchar *zak_authe_authe (ZakAuthe *zakauthe);
 gchar *zak_authe_get_password (ZakAuthe *zakauthe, gchar **password);
+gboolean zak_authe_authe_nogui (ZakAuthe *zakauthe, const gchar *username, const gchar *password, const gchar *new_password);
 
 GtkWidget *zak_authe_get_management_gui (ZakAuthe *zakauthe);
 
