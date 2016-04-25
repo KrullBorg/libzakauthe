@@ -4,8 +4,8 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: @PACKAGE_NAME@
-Description: Libreria per la gestione dell'autenticazione attraverso plugin
+Description: Library to manage authentication through plugins
 Version: @PACKAGE_VERSION@
 Requires: glib-2.0 @PKGCONFIG_DEPEND@
-Libs: -L${libdir} -laute
+Libs: -L${libdir} -lzakauthe
 Cflags: -I${includedir}

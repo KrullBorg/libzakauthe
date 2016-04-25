@@ -1,14 +1,14 @@
 AM_CPPFLAGS = $(LIBAUTE_CFLAGS) \
               $(LIBCONFI_CFLAGS) \
-              -DLIBAUTE_PLUGINS_DIR=\""$(libdir)/libaute/plugins"\"
+              -DLIB_ZAK_AUTHE_PLUGINS_DIR=\""$(libdir)/libzakauthe/plugins"\"
 
 LIBS = $(LIBAUTE_LIBS) \
        $(LIBCONFI_LIBS)
 
-lib_LTLIBRARIES = libaute.la
+lib_LTLIBRARIES = libzakauthe.la
 
-libaute_la_SOURCES = aute.c
+libzakauthe_la_SOURCES = aute.c
 
-libaute_la_LDFLAGS = -no-undefined
+libzakauthe_la_LDFLAGS = -no-undefined
 
-include_HEADERS = libaute.h
+include_HEADERS = libzakauthe.h

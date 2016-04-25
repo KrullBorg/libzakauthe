@@ -13,7 +13,7 @@ depcomp
 version.xml
 gtk-doc.make
 install-sh
-libaute.pc
+libzakauthe.pc
 libtool
 ltmain.sh
 missing
@@ -30,3 +30,5 @@ stamp-h1
 *.tar.gz
 docs/reference/html/
 docs/reference/xml/
+compile
+gtk-doc.m4
