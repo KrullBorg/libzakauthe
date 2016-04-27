@@ -1,9 +1,9 @@
-AM_CPPFLAGS = $(LIBAUTE_CFLAGS) \
-              $(LIBCONFI_CFLAGS) \
+AM_CPPFLAGS = $(LIBZAKAUTHE_CFLAGS) \
+              $(LIBZAKCONFI_CFLAGS) \
               -DLIB_ZAK_AUTHE_PLUGINS_DIR=\""$(libdir)/libzakauthe/plugins"\"
 
-LIBS = $(LIBAUTE_LIBS) \
-       $(LIBCONFI_LIBS)
+LIBS = $(LIBZAKAUTHE_LIBS) \
+       $(LIBZAKCONFI_LIBS)
 
 lib_LTLIBRARIES = libzakauthe.la
 

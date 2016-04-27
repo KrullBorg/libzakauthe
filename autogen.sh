@@ -10,7 +10,7 @@ PKG_NAME="libzakauthe"
   && test -d $srcdir/src \
   && test -f $srcdir/src/libzakauthe.h) || {
     echo -n "**Error**: Directory "\`$srcdir\'" does not look like the"
-    echo " top-level libaute directory"
+    echo " top-level libzakauthe directory"
     exit 1
 }
 

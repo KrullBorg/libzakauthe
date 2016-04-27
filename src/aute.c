@@ -23,6 +23,10 @@
 #include <stdio.h>
 #include <glib/gprintf.h>
 
+#ifdef HAVE_LIBZAKCONFI
+	#include <libzakconfi/libzakconfi.h>
+#endif
+
 #include "libzakauthe.h"
 
 static void zak_authe_class_init (ZakAutheClass *class);
@@ -38,7 +42,7 @@ static void zak_authe_get_property (GObject *object,
                                GParamSpec *pspec);
 static void zak_authe_finalize (GObject *object);
 
-GModule *zak_authe_get_module_from_confi (ZakAuthe *aute);
+static gchar *zak_authe_get_module_from_confi (ZakAuthe *aute);
 
 #define ZAK_AUTHE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_TYPE_AUTHE, ZakAuthePrivate))
 
@@ -49,8 +53,8 @@ struct _ZakAuthePrivate
 
 		GSList *parameters;
 
-#ifdef HAVE_LIBCONFI
-		Confi *confi;
+#ifdef HAVE_LIBZAKCONFI
+		ZakConfi *confi;
 #endif
 	};
 
@@ -76,7 +80,7 @@ zak_authe_init (ZakAuthe *form)
 	priv->module = NULL;
 	priv->parameters = NULL;
 
-#ifdef HAVE_LIBCONFI
+#ifdef HAVE_LIBZAKCONFI
 	priv->confi = NULL;
 #endif
 }
@@ -111,14 +115,15 @@ zak_authe_set_config (ZakAuthe *aute, GSList *parameters)
 
 	module_name = NULL;
 
-#ifdef HAVE_LIBCONFI
-	/* the first and only parameters must be a Confi object */
-	Confi *confi;
-
-	if (IS_CONFI (priv->parameters->data))
+#ifdef HAVE_LIBZAKCONFI
+	/* the first and only parameters must be a ZakConfi object */
+	if (g_strcmp0 ((gchar *)priv->parameters->data, "{libzakconfi}") == 0)
 		{
-			priv->confi = CONFI (priv->parameters->data);
-			module_name = zak_authe_get_module_from_confi (aute);
+			if (ZAK_IS_CONFI ((ZakConfi *)g_slist_nth_data (priv->parameters, 1)))
+				{
+					priv->confi = ZAK_CONFI ((ZakConfi *)g_slist_nth_data (priv->parameters, 1));
+					module_name = zak_authe_get_module_from_confi (aute);
+				}
 		}
 #endif
 
@@ -143,6 +148,8 @@ zak_authe_set_config (ZakAuthe *aute, GSList *parameters)
 			return FALSE;
 		}
 
+	g_free (module_name);
+
 	return TRUE;
 }
 
@@ -150,8 +157,8 @@ zak_authe_set_config (ZakAuthe *aute, GSList *parameters)
  * zak_authe_authe:
  * @aute:
  *
- * Returns: il nome utente se l'autenticazione va a buon fine;
- * stringa vuota ("") se viene premuto "Annulla"; NULL in caso di errore.
+ * Returns: the user name if authentication is successfull;
+ * empty string ("") if it is clicked the "Cancel" button; #NULL on error.
  */
 gchar
 *zak_authe_authe (ZakAuthe *aute)
@@ -348,32 +355,30 @@ zak_authe_finalize (GObject *object)
 	G_OBJECT_CLASS (zak_authe_parent_class)->finalize (object);
 }
 
-#ifdef HAVE_LIBCONFI
+#ifdef HAVE_LIBZAKCONFI
 /**
  * zak_authe_get_plugin_module:
- * @aute: un oggetto #ZakAuthe.
+ * @aute: a #ZakAuthe object.
  *
- * Returns: il nome, con il percorso, del plugin.
- * Returns: il nome, con il percorso, del plugin.
+ * Returns: plugin path.
  */
-gchar
+static gchar
 *zak_authe_get_module_from_confi (ZakAuthe *aute)
 {
 	gchar *libname;
 
 	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (aute);
 
-	g_return_val_if_fail (IS_CONFI (priv->confi), NULL);
+	g_return_val_if_fail (ZAK_IS_CONFI (priv->confi), NULL);
 
-	libname = confi_path_get_value (priv->confi, "aute/plugin");
+	libname = zak_confi_path_get_value (priv->confi, "libzakauthe/plugin");
 	if (libname == NULL)
 		{
 			/* TO DO */
-			g_warning ("Valore nullo della configurazione per il plugin.");
+			g_warning ("No config libzakauthe/plugin value found.");
 			return NULL;
 		}
-	libname = g_strconcat (LIB_ZAK_AUTHE_PLUGINS_DIR "/", libname, NULL);
 
-	return libname;
+	return g_strdup (libname);
 }
 #endif

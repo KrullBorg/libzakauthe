@@ -25,21 +25,21 @@ GTK_DOC_CHECK
 # Checks for libraries.
 have_libconfi=no
 
-PKG_CHECK_MODULES(LIBAUTE, [gmodule-2.0 >= 2.10.0
-                            gtk+-3.0 >= 3.0.0])
+PKG_CHECK_MODULES(LIBZAKAUTHE, [gmodule-2.0 >= 2.10.0
+							   gtk+-3.0 >= 3.0.0])
 
-AC_SUBST(LIBAUTE_CFLAGS)
-AC_SUBST(LIBAUTE_LIBS)
+AC_SUBST(LIBZAKAUTHE_CFLAGS)
+AC_SUBST(LIBZAKAUTHE_LIBS)
 
-PKG_CHECK_MODULES(LIBCONFI, [libconfi >= 0.0.2], [AC_DEFINE(HAVE_LIBCONFI, [1], [libconfi is present]), have_libconfi=yes], have_libconfi=no)
+PKG_CHECK_MODULES(LIBZAKCONFI, [libzakconfi >= 0.0.2], [AC_DEFINE(HAVE_LIBZAKCONFI, [1], [libzakconfi is present]), have_libzakconfi=yes], have_libzakconfi=no)
 
-AM_CONDITIONAL(HAVE_LIBCONFI, test x"$have_libconfi" = "xyes")
-AC_SUBST(LIBCONFI_CFLAGS)
-AC_SUBST(LIBCONFI_LIBS)
+AM_CONDITIONAL(HAVE_LIBZAKCONFI, test x"$have_libzakconfi" = "xyes")
+AC_SUBST(LIBZAKCONFI_CFLAGS)
+AC_SUBST(LIBZAKCONFI_LIBS)
 
-if test x"$have_libconfi" = "xyes"
+if test x"$have_libzakconfi" = "xyes"
 then
-	AC_SUBST(PKGCONFIG_DEPEND, [", libconfi"])
+	AC_SUBST(PKGCONFIG_DEPEND, [", libzakconfi"])
 fi
 
 # Checks for header files.
