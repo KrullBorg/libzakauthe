@@ -273,10 +273,10 @@ GtkWidget
 	ret = NULL;
 
 	/* loading the function */
-	if (!g_module_symbol (priv->module, "get_management_gui", (gpointer *)&get_management_gui))
+	if (!g_module_symbol (priv->module, "zak_authe_plg_get_management_gui", (gpointer *)&get_management_gui))
 		{
 			/* TO DO */
-			g_warning ("Error g_module_symbol\n");
+			g_warning ("Error g_module_symbol: zak_authe_plg_get_management_gui.\n");
 			return NULL;
 		}
 
