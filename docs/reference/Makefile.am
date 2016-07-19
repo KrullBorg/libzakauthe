@@ -9,7 +9,7 @@ AUTOMAKE_OPTIONS = 1.6
 # of using the various options.
 
 # The name of the module, e.g. 'glib'.
-DOC_MODULE=libaute
+DOC_MODULE=libzakauthe
 
 # The top-level SGML file. You can change this if you want to.
 DOC_MAIN_SGML_FILE=$(DOC_MODULE)-docs.sgml
@@ -24,7 +24,7 @@ DOC_SOURCE_DIR=../../src
 SCANGOBJ_OPTIONS=
 
 # Extra options to supply to gtkdoc-scan.
-# e.g. SCAN_OPTIONS=--deprecated-guards="GTK_DISABLE_DEPRECATED" 
+# e.g. SCAN_OPTIONS=--deprecated-guards="GTK_DISABLE_DEPRECATED"
 SCAN_OPTIONS=
 
 # Extra options to supply to gtkdoc-mkdb.
@@ -67,8 +67,8 @@ expand_content_files=
 # signals and properties.
 # e.g. INCLUDES=-I$(top_srcdir) -I$(top_builddir) $(GTK_DEBUG_FLAGS)
 # e.g. GTKDOC_LIBS=$(top_builddir)/gtk/$(gtktargetlib)
-INCLUDES=-I$(top_srcdir) -I($top_builddir) $(LIBAUTE_CFLAGS)
-GTKDOC_LIBS=$(top_builddir)/src/libaute.la $(LIBAUTE_LIBS)
+INCLUDES=-I$(top_srcdir) -I($top_builddir) $(LIBZAKAUTHE_CFLAGS)
+GTKDOC_LIBS=$(top_builddir)/src/libzakauthe.la $(LIBZAKAUTHE_LIBS)
 
 # This includes the standard gtk-doc make rules, copied by gtkdocize.
 include $(top_srcdir)/gtk-doc.make
