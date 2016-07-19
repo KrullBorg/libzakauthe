@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([libzakauthe], [0.5.0], [azagli@libero.it])
+AC_INIT([libzakauthe], [0.5.99], [azagli@libero.it])
 AC_CONFIG_SRCDIR([src/aute.c])
 AC_CONFIG_HEADER([config.h])
 
@@ -39,7 +39,7 @@ AC_SUBST(LIBZAKCONFI_LIBS)
 
 if test x"$have_libzakconfi" = "xyes"
 then
-	AC_SUBST(PKGCONFIG_DEPEND, [", libzakconfi"])
+	AC_SUBST(PKGCONFIG_DEPEND, ["libzakconfi"])
 fi
 
 # Checks for header files.
