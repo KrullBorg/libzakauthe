@@ -25,8 +25,8 @@ GTK_DOC_CHECK
 # Checks for libraries.
 have_libconfi=no
 
-PKG_CHECK_MODULES(LIBZAKAUTHE, [gmodule-2.0 >= 2.10.0
-							   gtk+-3.0 >= 3.0.0])
+PKG_CHECK_MODULES(LIBZAKAUTHE, [gtk+-3.0 >= 3.0.0
+                                libpeas-1.0 >= 1.12.0])
 
 AC_SUBST(LIBZAKAUTHE_CFLAGS)
 AC_SUBST(LIBZAKAUTHE_LIBS)
