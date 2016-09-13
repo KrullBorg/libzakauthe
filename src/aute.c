@@ -23,6 +23,8 @@
 #include <stdio.h>
 #include <glib/gprintf.h>
 
+#include <libpeas/peas.h>
+
 #ifdef HAVE_LIBZAKCONFI
 	#include <libzakconfi/libzakconfi.h>
 #endif
@@ -42,14 +44,16 @@ static void zak_authe_get_property (GObject *object,
                                GParamSpec *pspec);
 static void zak_authe_finalize (GObject *object);
 
-static gchar *zak_authe_get_module_from_confi (ZakAuthe *aute);
+#ifdef HAVE_LIBZAKCONFI
+static gchar *zak_authe_get_pluggable_from_confi (ZakAuthe *authe);
+#endif
 
 #define ZAK_AUTHE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), ZAK_TYPE_AUTHE, ZakAuthePrivate))
 
 typedef struct _ZakAuthePrivate ZakAuthePrivate;
 struct _ZakAuthePrivate
 	{
-		GModule *module;
+		ZakAuthePluggable *pluggable;
 
 		GSList *parameters;
 
@@ -77,7 +81,7 @@ zak_authe_init (ZakAuthe *form)
 {
 	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (form);
 
-	priv->module = NULL;
+	priv->pluggable = NULL;
 	priv->parameters = NULL;
 
 #ifdef HAVE_LIBZAKCONFI
@@ -105,7 +109,13 @@ ZakAuthe
 gboolean
 zak_authe_set_config (ZakAuthe *aute, GSList *parameters)
 {
+	gboolean ret;
+
+	PeasEngine *peas_engine;
+
 	gchar *module_name;
+
+	const GList *lst_plugins;
 
 	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (aute);
 
@@ -122,7 +132,7 @@ zak_authe_set_config (ZakAuthe *aute, GSList *parameters)
 			if (ZAK_IS_CONFI ((ZakConfi *)g_slist_nth_data (priv->parameters, 1)))
 				{
 					priv->confi = ZAK_CONFI ((ZakConfi *)g_slist_nth_data (priv->parameters, 1));
-					module_name = zak_authe_get_module_from_confi (aute);
+					module_name = zak_authe_get_pluggable_from_confi (aute);
 				}
 		}
 #endif
@@ -139,18 +149,47 @@ zak_authe_set_config (ZakAuthe *aute, GSList *parameters)
 			return FALSE;
 		}
 
-	/* loading library */
-	priv->module = g_module_open (module_name, G_MODULE_BIND_LAZY);
-	if (!priv->module)
+	peas_engine = peas_engine_get_default ();
+	if (peas_engine == NULL)
 		{
-			/* TO DO */
-			g_warning ("Error g_module_open.");
 			return FALSE;
+		}
+
+	ret = TRUE;
+
+	peas_engine_add_search_path (peas_engine, LIB_ZAK_AUTHE_PLUGINS_DIR, NULL);
+
+	lst_plugins = peas_engine_get_plugin_list (peas_engine);
+	while (lst_plugins)
+		{
+			PeasPluginInfo *ppinfo;
+
+			ppinfo = (PeasPluginInfo *)lst_plugins->data;
+
+			if (g_strcmp0 (module_name, peas_plugin_info_get_module_name (ppinfo)) == 0)
+				{
+					if (peas_engine_load_plugin (peas_engine, ppinfo))
+						{
+							PeasExtension *ext;
+							ext = peas_engine_create_extension (peas_engine, ppinfo, ZAK_AUTHE_TYPE_PLUGGABLE,
+							                                    NULL);
+							priv->pluggable = (ZakAuthePluggable *)ext;
+							break;
+						}
+				}
+
+			lst_plugins = g_list_next (lst_plugins);
+		}
+
+	if (priv->pluggable == NULL)
+		{
+			g_warning ("No plugin found with name \"%s\".", module_name);
+			ret = FALSE;
 		}
 
 	g_free (module_name);
 
-	return TRUE;
+	return ret;
 }
 
 /**
@@ -163,25 +202,16 @@ zak_authe_set_config (ZakAuthe *aute, GSList *parameters)
 gchar
 *zak_authe_authe (ZakAuthe *aute)
 {
-	gchar *(*autentica) (GSList *parameters);
 	gchar *ret;
 
 	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (aute);
 
-	g_return_val_if_fail (priv->module != NULL, NULL);
+	g_return_val_if_fail (priv->pluggable != NULL, NULL);
 
 	ret = NULL;
 
-	/* loading the function */
-	if (!g_module_symbol (priv->module, "zak_authe_plg_authe", (gpointer *)&autentica))
-		{
-			/* TO DO */
-			g_warning ("Error g_module_symbol\n");
-			return NULL;
-		}
-
 	/* calling plugin's function */
-	ret = (*autentica) (priv->parameters);
+	ret = zak_authe_pluggable_authe (priv->pluggable, priv->parameters);
 
 	return ret;
 }
@@ -198,29 +228,16 @@ gchar
 gchar
 *zak_authe_get_password (ZakAuthe *aute, gchar **password)
 {
-	gchar *(*zak_authe_plg_get_password) (GSList *parameters, gchar **password);
 	gchar *ret;
 
 	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (aute);
 
-	g_return_val_if_fail (priv->module != NULL, NULL);
+	g_return_val_if_fail (priv->pluggable != NULL, NULL);
 
 	ret = NULL;
 
-	/* loading the function */
-	if (!g_module_symbol (priv->module, "zak_authe_plg_get_password", (gpointer *)&zak_authe_plg_get_password))
-		{
-			/* TO DO */
-			g_warning ("Error g_module_symbol: zak_authe_plg_get_password.\n");
-
-			/* try zak_authe_authe */
-			ret = zak_authe_authe (aute);
-		}
-	else
-		{
-			/* calling plugin's function */
-			ret = (*zak_authe_plg_get_password) (priv->parameters, password);
-		}
+	/* calling plugin's function */
+	ret = zak_authe_pluggable_authe_get_password (priv->pluggable, priv->parameters, password);
 
 	return ret;
 }
@@ -239,25 +256,12 @@ zak_authe_authe_nogui (ZakAuthe *zakauthe, const gchar *username, const gchar *p
 {
 	gboolean ret;
 
-	gboolean (*zak_authe_plg_authe_nogui) (GSList *parameters, const gchar *username, const gchar *password, const gchar *new_password);
-
 	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (zakauthe);
 
-	g_return_val_if_fail (priv->module != NULL, FALSE);
+	g_return_val_if_fail (priv->pluggable != NULL, FALSE);
 
-	/* loading the function */
-	if (!g_module_symbol (priv->module, "zak_authe_plg_authe_nogui", (gpointer *)&zak_authe_plg_authe_nogui))
-		{
-			/* TO DO */
-			g_warning ("Error g_module_symbol: zak_authe_plg_authe_nogui.\n");
-
-			ret = FALSE;
-		}
-	else
-		{
-			/* calling plugin's function */
-			ret = (*zak_authe_plg_authe_nogui) (priv->parameters, username, password, new_password);
-		}
+	/* calling plugin's function */
+	ret = zak_authe_pluggable_authe_nogui (priv->pluggable, priv->parameters, username, password, new_password);
 
 	return ret;
 }
@@ -270,28 +274,18 @@ zak_authe_authe_nogui (ZakAuthe *zakauthe, const gchar *username, const gchar *p
 GtkWidget
 *zak_authe_get_management_gui (ZakAuthe *aute)
 {
-	GtkWidget *(*get_management_gui) (GSList *parameters);
 	GtkWidget *ret;
 
 	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (aute);
 
-	g_return_val_if_fail (priv->module != NULL, NULL);
+	g_return_val_if_fail (priv->pluggable != NULL, NULL);
 
 	ret = NULL;
 
-	/* loading the function */
-	if (!g_module_symbol (priv->module, "zak_authe_plg_get_management_gui", (gpointer *)&get_management_gui))
-		{
-			/* TO DO */
-			g_warning ("Error g_module_symbol: zak_authe_plg_get_management_gui.\n");
-			return NULL;
-		}
-
 	/* calling plugin's function */
-	ret = (*get_management_gui) (priv->parameters);
+	ret = zak_authe_pluggable_get_management_gui (priv->pluggable, priv->parameters);
 
 	return ret;
-
 }
 
 /* PRIVATE */
@@ -338,36 +332,23 @@ zak_authe_finalize (GObject *object)
 
 	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (aute);
 
-	/* closing the library */
-	if (priv->module != NULL)
-		{
-			if (!g_module_close (priv->module))
-				{
-					g_fprintf (stderr, "Error g_module_close\n");
-				}
-			else
-				{
-					priv->module = NULL;
-				}
-		}
-
 	/* Chain up to the parent class */
 	G_OBJECT_CLASS (zak_authe_parent_class)->finalize (object);
 }
 
 #ifdef HAVE_LIBZAKCONFI
 /**
- * zak_authe_get_plugin_module:
- * @aute: a #ZakAuthe object.
+ * zak_authe_get_pluggable_from_confi:
+ * @authe: a #ZakAuthe object.
  *
  * Returns: plugin path.
  */
 static gchar
-*zak_authe_get_module_from_confi (ZakAuthe *aute)
+*zak_authe_get_pluggable_from_confi (ZakAuthe *authe)
 {
 	gchar *libname;
 
-	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (aute);
+	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (authe);
 
 	g_return_val_if_fail (ZAK_IS_CONFI (priv->confi), NULL);
 
