@@ -32,3 +32,5 @@ docs/reference/html/
 docs/reference/xml/
 compile
 gtk-doc.m4
+*.gir
+*.typelib

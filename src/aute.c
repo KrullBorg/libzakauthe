@@ -97,17 +97,21 @@ zak_authe_init (ZakAuthe *form)
 ZakAuthe
 *zak_authe_new ()
 {
-	return ZAK_AUTHE (g_object_new (zak_authe_get_type (), NULL));
+	ZakAuthe *zakauthe;
+
+	zakauthe = ZAK_AUTHE (g_object_new (zak_authe_get_type (), NULL));
+
+	return zakauthe;
 }
 
 /*
  * zak_authe_set_config:
- * @aute: an #ZakAuthe object.
+ * @zakauthe: an #ZakAuthe object.
  * @parameters: a #GSList of config parameters.
  *
  */
 gboolean
-zak_authe_set_config (ZakAuthe *aute, GSList *parameters)
+zak_authe_set_config (ZakAuthe *zakauthe, GSList *parameters)
 {
 	gboolean ret;
 
@@ -117,7 +121,7 @@ zak_authe_set_config (ZakAuthe *aute, GSList *parameters)
 
 	const GList *lst_plugins;
 
-	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (aute);
+	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (zakauthe);
 
 	g_return_val_if_fail (parameters != NULL && parameters->data != NULL, FALSE);
 
@@ -132,7 +136,7 @@ zak_authe_set_config (ZakAuthe *aute, GSList *parameters)
 			if (ZAK_IS_CONFI ((ZakConfi *)g_slist_nth_data (priv->parameters, 1)))
 				{
 					priv->confi = ZAK_CONFI ((ZakConfi *)g_slist_nth_data (priv->parameters, 1));
-					module_name = zak_authe_get_pluggable_from_confi (aute);
+					module_name = zak_authe_get_pluggable_from_confi (zakauthe);
 				}
 		}
 #endif
@@ -194,17 +198,17 @@ zak_authe_set_config (ZakAuthe *aute, GSList *parameters)
 
 /**
  * zak_authe_authe:
- * @aute:
+ * @zakauthe:
  *
  * Returns: the user name if authentication is successfull;
  * empty string ("") if it is clicked the "Cancel" button; #NULL on error.
  */
 gchar
-*zak_authe_authe (ZakAuthe *aute)
+*zak_authe_authe (ZakAuthe *zakauthe)
 {
 	gchar *ret;
 
-	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (aute);
+	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (zakauthe);
 
 	g_return_val_if_fail (priv->pluggable != NULL, NULL);
 
@@ -218,7 +222,7 @@ gchar
 
 /**
  * zak_authe_get_password:
- * @aute:
+ * @zakauthe:
  * @password:
  *
  * Returns: il nome utente se l'autenticazione va a buon fine;
@@ -226,11 +230,11 @@ gchar
  * Nel parametro @password ritorna la password inserita.
  */
 gchar
-*zak_authe_get_password (ZakAuthe *aute, gchar **password)
+*zak_authe_get_password (ZakAuthe *zakauthe, gchar **password)
 {
 	gchar *ret;
 
-	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (aute);
+	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (zakauthe);
 
 	g_return_val_if_fail (priv->pluggable != NULL, NULL);
 
@@ -244,7 +248,7 @@ gchar
 
 /**
  * zak_authe_authe_nogui:
- * @zakaute:
+ * @zakauthe:
  * @username:
  * @password:
  * @new_password:
@@ -268,15 +272,15 @@ zak_authe_authe_nogui (ZakAuthe *zakauthe, const gchar *username, const gchar *p
 
 /**
  * zak_authe_get_management_gui:
- * @aute:
+ * @zakauthe:
  *
  */
 GtkWidget
-*zak_authe_get_management_gui (ZakAuthe *aute)
+*zak_authe_get_management_gui (ZakAuthe *zakauthe)
 {
 	GtkWidget *ret;
 
-	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (aute);
+	ZakAuthePrivate *priv = ZAK_AUTHE_GET_PRIVATE (zakauthe);
 
 	g_return_val_if_fail (priv->pluggable != NULL, NULL);
 

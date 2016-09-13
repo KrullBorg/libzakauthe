@@ -22,6 +22,8 @@ AC_PROG_LIBTOOL
 
 GTK_DOC_CHECK
 
+GOBJECT_INTROSPECTION_CHECK([1.30.0])
+
 # Checks for libraries.
 have_libconfi=no
 
