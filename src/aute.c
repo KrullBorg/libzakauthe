@@ -21,7 +21,13 @@
 #endif
 
 #include <stdio.h>
+
+#include <glib.h>
 #include <glib/gprintf.h>
+
+#ifdef G_OS_WIN32
+#include <windows.h>
+#endif
 
 #include <libpeas/peas.h>
 
@@ -30,6 +36,8 @@
 #endif
 
 #include "libzakauthe.h"
+
+static gchar *pluginsdir;
 
 static void zak_authe_class_init (ZakAutheClass *class);
 static void zak_authe_init (ZakAuthe *form);
@@ -63,6 +71,30 @@ struct _ZakAuthePrivate
 	};
 
 G_DEFINE_TYPE (ZakAuthe, zak_authe, G_TYPE_OBJECT)
+
+#ifdef G_OS_WIN32
+static HMODULE backend_dll = NULL;
+
+BOOL WINAPI DllMain (HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved);
+
+BOOL WINAPI
+DllMain (HINSTANCE hinstDLL,
+         DWORD     fdwReason,
+         LPVOID    lpReserved)
+{
+	switch (fdwReason)
+		{
+			case DLL_PROCESS_ATTACH:
+				backend_dll = (HMODULE) hinstDLL;
+				break;
+			case DLL_THREAD_ATTACH:
+			case DLL_THREAD_DETACH:
+			case DLL_PROCESS_DETACH:
+				break;
+		}
+	return TRUE;
+}
+#endif
 
 static void
 zak_authe_class_init (ZakAutheClass *class)
@@ -98,6 +130,34 @@ ZakAuthe
 *zak_authe_new ()
 {
 	ZakAuthe *zakauthe;
+
+	#ifdef G_OS_WIN32
+
+	gchar *moddir;
+	gchar *p;
+
+	moddir = g_win32_get_package_installation_directory_of_module (backend_dll);
+
+	p = g_strrstr (moddir, g_strdup_printf ("%c", G_DIR_SEPARATOR));
+	if (p != NULL
+	    && (g_ascii_strcasecmp (p + 1, "src") == 0
+	    || g_ascii_strcasecmp (p + 1, ".libs") == 0))
+		{
+			pluginsdir = g_strdup (LIB_ZAK_AUTHE_PLUGINS_DIR);
+		}
+	else
+		{
+			pluginsdir = g_build_filename (moddir, "lib", PACKAGE, "plugins", NULL);
+			g_warning ("%s",pluginsdir);
+		}
+
+#undef PLUGINSDIR
+
+#else
+
+	pluginsdir = g_strdup (LIB_ZAK_AUTHE_PLUGINS_DIR);
+
+#endif
 
 	zakauthe = ZAK_AUTHE (g_object_new (zak_authe_get_type (), NULL));
 
@@ -161,7 +221,7 @@ zak_authe_set_config (ZakAuthe *zakauthe, GSList *parameters)
 
 	ret = TRUE;
 
-	peas_engine_add_search_path (peas_engine, LIB_ZAK_AUTHE_PLUGINS_DIR, NULL);
+	peas_engine_add_search_path (peas_engine, pluginsdir, NULL);
 
 	lst_plugins = peas_engine_get_plugin_list (peas_engine);
 	while (lst_plugins)
